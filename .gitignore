@@ -56,6 +56,7 @@ tests/interpolation/interpolation
 tests/subpixel/subpixel
 tests/hidreportparser/hidreportparser
 tests/pointingdevice/pointingdevice
+tests/frequencyestimator/frequencyestimator
 tests/*/target_wrapper.sh
 bindings/Node/cache
 bindings/Node/nw
