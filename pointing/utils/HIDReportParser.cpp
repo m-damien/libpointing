@@ -165,7 +165,7 @@ namespace pointing
     }
   }
 
-  void HIDReportParser::clearAll()
+  void HIDReportParser::clearDescriptor()
   {
     lastUsage = 0;
     parentUsage = 0;
@@ -177,6 +177,8 @@ namespace pointing
     curRepInfo = &reportMap[0];
     dataMap.clear();
     usageList.clear();
+    delete[] report;
+    report = nullptr;
   }
 
   bool HIDReportParser::findCorrectReport()
@@ -217,7 +219,7 @@ namespace pointing
 
   bool HIDReportParser::setDescriptor(const unsigned char *desc, int size)
   {
-    clearAll();
+    clearDescriptor();
 
     int currentPosition = 0;
     while(currentPosition < size) {
@@ -227,7 +229,6 @@ namespace pointing
     }
     bool result = findCorrectReport();
 
-    delete[] report;
     int reportLength = getReportLength();
     if (!reportLength)
       return false; // Should not be zero

@@ -59,7 +59,6 @@ namespace pointing
     int debugLevel;
 
     void parseItem(const HIDItem &item);
-    void clearAll();
 
     // Find the report which contains relative X and Y
     bool findCorrectReport();
@@ -72,6 +71,11 @@ namespace pointing
     HIDReportParser& operator=(const HIDReportParser &);
 
     ~HIDReportParser();
+
+    /**
+     * @brief Clears all data, so the parser can't parse anymore
+     */
+    void clearDescriptor();
 
     /**
      * @brief setDescriptor Sets the HID descriptor, parses it.

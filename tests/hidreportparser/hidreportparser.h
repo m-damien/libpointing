@@ -49,21 +49,69 @@ private slots:
         QCOMPARE(buttons, 0);
     }
 
+    void simpleMouseReportsForObject(HIDReportParser *obj)
+    {
+        unsigned char report[4] = {0x01, 0x01, 0xFE, 0x00};
+        obj->setReport(report);
+        int dx = 0, dy = 0, buttons = 0;
+        bool result = obj->getReportData(&dx, &dy, &buttons);
+        int length = obj->getReportLength();
+        QCOMPARE(length, 4);
+        QCOMPARE(result, true);
+        QCOMPARE(dx, 1);
+        QCOMPARE(dy, -2);
+        QCOMPARE(buttons, 1);
+    }
+
     void simpleMouseReports()
     {
         unsigned char input[] = {
             0x05, 0x01, 0x09, 0x02, 0xa1, 0x01, 0x09, 0x01, 0xa1, 0x00, 0x05, 0x09, 0x19, 0x01, 0x29, 0x03, 0x15, 0x00, 0x25, 0x01, 0x75, 0x01, 0x95, 0x03, 0x81, 0x02, 0x75, 0x05, 0x95, 0x01, 0x81, 0x01, 0x05, 0x01, 0x09, 0x30, 0x09, 0x31, 0x09, 0x38, 0x15, 0x81, 0x25, 0x7f, 0x75, 0x08, 0x95, 0x03, 0x81, 0x06, 0xc0, 0xc0
         };
         parser->setDescriptor(input, sizeof(input));
+        simpleMouseReportsForObject(parser);
+    }
+
+    void copyConstructor()
+    {
+        // Simple mouse with 2 buttons and wheel, 52 bytes
+        unsigned char input[] = {
+            0x05, 0x01, 0x09, 0x02, 0xa1, 0x01, 0x09, 0x01, 0xa1, 0x00, 0x05, 0x09, 0x19, 0x01, 0x29, 0x03, 0x15, 0x00, 0x25, 0x01, 0x75, 0x01, 0x95, 0x03, 0x81, 0x02, 0x75, 0x05, 0x95, 0x01, 0x81, 0x01, 0x05, 0x01, 0x09, 0x30, 0x09, 0x31, 0x09, 0x38, 0x15, 0x81, 0x25, 0x7f, 0x75, 0x08, 0x95, 0x03, 0x81, 0x06, 0xc0, 0xc0
+        };
+        parser->setDescriptor(input, sizeof(input));
+        HIDReportParser another = *parser;
+        simpleMouseReportsForObject(&another);
+    }
+
+    void assignmentOperator()
+    {
+        HIDReportParser another;
+        // Simple mouse with 2 buttons and wheel, 52 bytes
+        unsigned char input[] = {
+            0x05, 0x01, 0x09, 0x02, 0xa1, 0x01, 0x09, 0x01, 0xa1, 0x00, 0x05, 0x09, 0x19, 0x01, 0x29, 0x03, 0x15, 0x00, 0x25, 0x01, 0x75, 0x01, 0x95, 0x03, 0x81, 0x02, 0x75, 0x05, 0x95, 0x01, 0x81, 0x01, 0x05, 0x01, 0x09, 0x30, 0x09, 0x31, 0x09, 0x38, 0x15, 0x81, 0x25, 0x7f, 0x75, 0x08, 0x95, 0x03, 0x81, 0x06, 0xc0, 0xc0
+        };
+        parser->setDescriptor(input, sizeof(input));
+        another = *parser;
+        simpleMouseReportsForObject(&another);
+    }
+
+    void cleanDescriptor()
+    {
+        // Use the parser
+        simpleMouseReports();
+        // And clean it
+        parser->clearDescriptor();
+
         unsigned char report[4] = {0x01, 0x01, 0xFE, 0x00};
         parser->setReport(report);
-        int dx = 0, dy = 0, buttons = 0;
+        int dx = 1, dy = 1, buttons = 1;
         bool result = parser->getReportData(&dx, &dy, &buttons);
         int length = parser->getReportLength();
-        QCOMPARE(length, 4);
-        QCOMPARE(result, true);
+        // Nothing should change and the result should be false
+        QCOMPARE(result, false);
+        QCOMPARE(length, 0);
         QCOMPARE(dx, 1);
-        QCOMPARE(dy, -2);
+        QCOMPARE(dy, 1);
         QCOMPARE(buttons, 1);
     }
 
@@ -640,6 +688,31 @@ private slots:
       QCOMPARE(dx, 5);
       QCOMPARE(dy, 3);
       QCOMPARE(buttons, 2);
+    }
+
+    void emptyDescriptor()
+    {
+        parser->clearDescriptor();
+        int length = parser->getReportLength();
+        QCOMPARE(length, 0);
+        int dx = 0, dy = 0, buttons = 0;
+        bool result = parser->getReportData(&dx, &dy, &buttons);
+        // Should return false since no descriptor was specified
+        QCOMPARE(result, false);
+
+        QCOMPARE(dx, 0);
+        QCOMPARE(dy, 0);
+        QCOMPARE(buttons, 0);
+
+        unsigned char report[5] = { 0x01, 0x02, 0x03, 0x04, 0x05};
+        // Setting the report should return true even if the desciptor size = 0 
+        result = parser->setReport(report);
+        QCOMPARE(result, true);
+        parser->getReportData(&dx, &dy, &buttons);
+        // dx, dy, buttons should not change
+        QCOMPARE(dx, 0);
+        QCOMPARE(dy, 0);
+        QCOMPARE(buttons, 0);
     }
 
     // At the end
