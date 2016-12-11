@@ -20,27 +20,6 @@
 #include <stdexcept>
 
 namespace pointing {
-
-#if 0
-  bool isNotPointingDevice(IOHIDDeviceRef devRef)
-  {
-    // List of the URI substrings for which the corresponding devices will be ignored
-    io_name_t ignored[] = {
-      "Keyboard",
-      "AppleUSBTCButtons",
-      "BNBTrackpadDevice",
-      "AppleMikeyHIDDriver",
-      "AppleUSBMultitouchDriver"
-    } ;
-    io_name_t className;
-    IOObjectGetClass(IOHIDDeviceGetService(devRef), className);
-    const int n = sizeof(ignored) / sizeof(ignored[0]);
-    for (int i = 0; i < n; i++)
-      if (strstr(className, ignored[i]) != NULL)
-        return true;
-    return false;
-  }
-#endif
   
   void fillDescriptorInfo(IOHIDDeviceRef devRef, PointingDeviceDescriptor &desc)
   {
@@ -68,36 +47,39 @@ namespace pointing {
 
   void osxPointingDeviceManager::AddDevice(void *sender, IOReturn, void *, IOHIDDeviceRef devRef)
   {
-    // if (isNotPointingDevice(devRef)) return ; // Prevents other HID devices from being detected
-    // NR: No. These devices matched the requested profile, leave that decision to the application    
-    
+    CFDataRef descriptor = (CFDataRef)IOHIDDeviceGetProperty(devRef, CFSTR(kIOHIDReportDescriptorKey));
+    if (!descriptor)
+      return;
+
     osxPointingDeviceManager *self = (osxPointingDeviceManager *)sender;
+
+    const UInt8 *bytes = CFDataGetBytePtr(descriptor);
+    CFIndex length = CFDataGetLength(descriptor);
+
+    if (self->debugLevel > 1)
+    {
+      std::cerr << "HID descriptors: [ " << std::flush ;
+      for (int i=0; i<length; ++i)
+        std::cerr << std::hex << std::setfill('0') << std::setw(2) << (int)bytes[i] << " " ;
+      std::cerr << "]" << std::endl ;
+    }
+
+    HIDReportParser parser;
+    // Try to parse with the parser
+    // Return if it fails, this is probably not a pointing device 
+    if (!parser.setDescriptor(bytes, length))
+    {
+      if (self->debugLevel > 1)
+        std::cerr << "    osxPointingDeviceManager::AddDevice: unable to parse the HID report descriptor" << std::endl;
+      return;
+    }
+    // Copy the parser to the corresponding pointing device data
     osxPointingDeviceData *pdd = new osxPointingDeviceData;
     fillDescriptorInfo(devRef, pdd->desc);
     pdd->devRef = devRef;
     self->registerDevice(devRef, pdd);
-
-    CFDataRef descriptor = (CFDataRef)IOHIDDeviceGetProperty(devRef, CFSTR(kIOHIDReportDescriptorKey));
-    if (descriptor) {
-      const UInt8 *bytes = CFDataGetBytePtr(descriptor);
-      CFIndex length = CFDataGetLength(descriptor);
-      if (!pdd->parser.setDescriptor(bytes, length))
-      {
-        if (self->debugLevel > 1)
-          std::cerr << "    osxPointingDeviceManager::AddDevice: unable to parse the HID report descriptor" << std::endl;
-      }
-      else {
-	IOHIDDeviceRegisterInputReportCallback(devRef, pdd->report, sizeof(pdd->report), hidReportCallback, self) ;
-      }
-
-      if (self->debugLevel > 1)
-      {
-        std::cerr << "HID descriptors: [ " << std::flush ;
-        for (int i=0; i<length; ++i)
-          std::cerr << std::hex << std::setfill('0') << std::setw(2) << (int)bytes[i] << " " ;
-        std::cerr << "]" << std::endl ;
-      }
-    }
+    pdd->parser = parser;
+    IOHIDDeviceRegisterInputReportCallback(devRef, pdd->report, sizeof(pdd->report), hidReportCallback, self);
   }
 
   void osxPointingDeviceManager::RemoveDevice(void *sender, IOReturn, void *, IOHIDDeviceRef devRef)
