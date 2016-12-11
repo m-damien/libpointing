@@ -64,13 +64,13 @@ namespace pointing
     // Find the report which contains relative X and Y
     bool findCorrectReport();
 
-    // TODO Implement copy constructor which copies
-    // report and curRepInfo correctly
-    HIDReportParser(HIDReportParser const&);
-
   public:
     HIDReportParser();
     HIDReportParser(unsigned char *desc, int size, int debugLevel=0);
+
+    HIDReportParser(const HIDReportParser &);
+    HIDReportParser& operator=(const HIDReportParser &);
+
     ~HIDReportParser();
 
     /**
@@ -92,7 +92,7 @@ namespace pointing
      * @brief getReportLength
      * @return The length of the Mouse Report in bytes deduced from the report descriptor
      */
-    int getReportLength();
+    int getReportLength() const;
 
     /**
      * @brief getDxDy Gives the relative X and Y in mouse points
