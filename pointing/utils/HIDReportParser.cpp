@@ -27,11 +27,37 @@ namespace pointing
   HIDReportParser::HIDReportParser()
     :lastRepCount(0),lastRepSize(0),curRepInfo(0),report(0),debugLevel(0) { }
 
-  HIDReportParser::HIDReportParser(unsigned char *desc, int size, int debugLevel):
-    lastRepCount(0),lastRepSize(0),curRepInfo(0),report(0),debugLevel(debugLevel)
+  HIDReportParser::HIDReportParser(unsigned char *desc, int size, int debugLevel)
+    :lastRepCount(0),lastRepSize(0),curRepInfo(0),report(0),debugLevel(debugLevel)
   {
     if (size)
       setDescriptor(desc, size);
+  }
+
+  HIDReportParser::HIDReportParser(const HIDReportParser &other)
+    :HIDReportParser()
+  {
+    // Copy the MouseReport from the other's map
+    // And point to it.
+    reportMap[0] = *(other.curRepInfo);
+    curRepInfo = &reportMap[0];
+    // Create the container for the reports
+    report = new unsigned char[other.getReportLength()];
+  }
+
+  // Copy assignment
+  HIDReportParser& HIDReportParser::operator=(const HIDReportParser &other)
+  {
+    if (&other == this)
+      return *this;
+    // Copy the MouseReport from the other's map
+    // And point to it.
+    reportMap[0] = *(other.curRepInfo);
+    curRepInfo = &reportMap[0];
+    delete[] report;
+    // Create the container for the reports
+    report = new unsigned char[other.getReportLength()];
+    return *this;
   }
 
   void HIDReportParser::parseItem(const HIDItem &item)
@@ -139,7 +165,7 @@ namespace pointing
     }
   }
 
-  void HIDReportParser::clearAll()
+  void HIDReportParser::clearDescriptor()
   {
     lastUsage = 0;
     parentUsage = 0;
@@ -151,6 +177,8 @@ namespace pointing
     curRepInfo = &reportMap[0];
     dataMap.clear();
     usageList.clear();
+    delete[] report;
+    report = nullptr;
   }
 
   bool HIDReportParser::findCorrectReport()
@@ -186,12 +214,12 @@ namespace pointing
 
   HIDReportParser::~HIDReportParser()
   {
-    delete report;
+    delete[] report;
   }
 
   bool HIDReportParser::setDescriptor(const unsigned char *desc, int size)
   {
-    clearAll();
+    clearDescriptor();
 
     int currentPosition = 0;
     while(currentPosition < size) {
@@ -201,9 +229,12 @@ namespace pointing
     }
     bool result = findCorrectReport();
 
-    delete report;
-    report = new unsigned char[curRepInfo->size];
-    memset(report, 0, curRepInfo->size / 8);
+    int reportLength = getReportLength();
+    if (!reportLength)
+      return false; // Should not be zero
+
+    report = new unsigned char[reportLength];
+    memset(report, 0, reportLength);
     return result;
   }
 
@@ -215,7 +246,7 @@ namespace pointing
     return true;
   }
 
-  int HIDReportParser::getReportLength()
+  int HIDReportParser::getReportLength() const
   {
     // Should be divisible by 8, thus not returning ceil(curRepInfo->size / 8)
     return curRepInfo->size / 8;

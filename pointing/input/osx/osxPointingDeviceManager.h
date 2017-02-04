@@ -20,14 +20,13 @@
 #include <list>
 #include <pointing/input/PointingDeviceManager.h>
 #include <IOKit/hid/IOHIDManager.h>
-#include <pointing/input/osx/osxPointingDevice.h>
 #include <pointing/utils/HIDReportParser.h>
 
 #include <iomanip>
 
 namespace pointing
 {
-/**
+  /**
    * @brief The osxPointingDeviceManager class is the platform-specific
    * subclass of the PointingDeviceManager class.
    *
@@ -44,7 +43,8 @@ namespace pointing
     {
       HIDReportParser parser;
       uint8_t report[64];
-      IOHIDDeviceRef devRef;
+      IOHIDDeviceRef devRef = nullptr;
+      virtual ~osxPointingDeviceData();
     };
 
     void processMatching(PointingDeviceData *pdd, SystemPointingDevice *device);

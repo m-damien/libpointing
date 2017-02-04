@@ -97,6 +97,7 @@ namespace pointing
         {
           PointingDeviceDescriptor desc;
           PointingList pointingList;
+          virtual ~PointingDeviceData() {}
         };
 
         std::map<identifier, PointingDeviceData *> devMap;

@@ -15,32 +15,13 @@
 
 #include <pointing/input/osx/osxPointingDeviceManager.h>
 
-#include <pointing/utils/osx/osxPlistUtils.h>
 #include <pointing/input/osx/osxHIDUtils.h>
+#include <pointing/input/osx/osxPointingDevice.h>
+#include <pointing/utils/osx/osxPlistUtils.h>
+
 #include <stdexcept>
 
 namespace pointing {
-
-#if 0
-  bool isNotPointingDevice(IOHIDDeviceRef devRef)
-  {
-    // List of the URI substrings for which the corresponding devices will be ignored
-    io_name_t ignored[] = {
-      "Keyboard",
-      "AppleUSBTCButtons",
-      "BNBTrackpadDevice",
-      "AppleMikeyHIDDriver",
-      "AppleUSBMultitouchDriver"
-    } ;
-    io_name_t className;
-    IOObjectGetClass(IOHIDDeviceGetService(devRef), className);
-    const int n = sizeof(ignored) / sizeof(ignored[0]);
-    for (int i = 0; i < n; i++)
-      if (strstr(className, ignored[i]) != NULL)
-        return true;
-    return false;
-  }
-#endif
   
   void fillDescriptorInfo(IOHIDDeviceRef devRef, PointingDeviceDescriptor &desc)
   {
@@ -49,6 +30,15 @@ namespace pointing {
     desc.product = hidDeviceGetStringProperty(devRef, CFSTR(kIOHIDProductKey));
     desc.vendorID = hidDeviceGetIntProperty(devRef, CFSTR(kIOHIDVendorIDKey));
     desc.productID = hidDeviceGetIntProperty(devRef, CFSTR(kIOHIDProductIDKey));
+  }
+
+  osxPointingDeviceManager::osxPointingDeviceData::~osxPointingDeviceData()
+  {
+    if (devRef)
+    {
+      IOHIDDeviceClose(devRef, kIOHIDOptionsTypeNone);
+      CFRelease(devRef);
+    }
   }
 
   void osxPointingDeviceManager::processMatching(PointingDeviceData *data, SystemPointingDevice *device)
@@ -68,45 +58,52 @@ namespace pointing {
 
   void osxPointingDeviceManager::AddDevice(void *sender, IOReturn, void *, IOHIDDeviceRef devRef)
   {
-    // if (isNotPointingDevice(devRef)) return ; // Prevents other HID devices from being detected
-    // NR: No. These devices matched the requested profile, leave that decision to the application    
-    
-    osxPointingDeviceManager *self = (osxPointingDeviceManager *)sender;
-    osxPointingDeviceData *pdd = new osxPointingDeviceData;
-    fillDescriptorInfo(devRef, pdd->desc);
-    pdd->devRef = devRef;
-    self->registerDevice(devRef, pdd);
-
     CFDataRef descriptor = (CFDataRef)IOHIDDeviceGetProperty(devRef, CFSTR(kIOHIDReportDescriptorKey));
-    if (descriptor) {
-      const UInt8 *bytes = CFDataGetBytePtr(descriptor);
-      CFIndex length = CFDataGetLength(descriptor);
-      if (!pdd->parser.setDescriptor(bytes, length))
-      {
-        if (self->debugLevel > 1)
-          std::cerr << "    osxPointingDeviceManager::AddDevice: unable to parse the HID report descriptor" << std::endl;
-      }
-      else {
-	IOHIDDeviceRegisterInputReportCallback(devRef, pdd->report, sizeof(pdd->report), hidReportCallback, self) ;
-      }
+    if (!descriptor)
+      return;
 
-      if (self->debugLevel > 1)
-      {
-        std::cerr << "HID descriptors: [ " << std::flush ;
-        for (int i=0; i<length; ++i)
-          std::cerr << std::hex << std::setfill('0') << std::setw(2) << (int)bytes[i] << " " ;
-        std::cerr << "]" << std::endl ;
-      }
+    osxPointingDeviceManager *self = (osxPointingDeviceManager *)sender;
+
+    const UInt8 *bytes = CFDataGetBytePtr(descriptor);
+    CFIndex length = CFDataGetLength(descriptor);
+
+    if (self->debugLevel > 1)
+    {
+      std::cerr << "HID descriptors: [ " << std::flush ;
+      for (int i=0; i<length; ++i)
+        std::cerr << std::hex << std::setfill('0') << std::setw(2) << (int)bytes[i] << " " ;
+      std::cerr << "]" << std::endl ;
     }
+
+    HIDReportParser parser;
+    // Try to parse with the parser
+    // Return if it fails, this is probably not a pointing device 
+    if (!parser.setDescriptor(bytes, length))
+    {
+      if (self->debugLevel > 1)
+        std::cerr << "    osxPointingDeviceManager::AddDevice: unable to parse the HID report descriptor" << std::endl;
+      return;
+    }
+    
+    osxPointingDeviceData *pdd = new osxPointingDeviceData;
+
+    // We should not open or close IOHIDManager's IOHIDDeviceRefs.
+    // So, create our own IOHIDDeviceRef from pdd->devRef.
+    io_service_t devService = IOHIDDeviceGetService(devRef);
+    pdd->devRef = IOHIDDeviceCreate(kCFAllocatorDefault, devService);
+    fillDescriptorInfo(pdd->devRef, pdd->desc);
+    // Note that, devRef and pdd->devRef are not the same.
+    // devRef is the IOHIDManager's IOHIDDeviceRef.
+    self->registerDevice(pdd->devRef, pdd);
+    pdd->parser = parser;
+    IOHIDDeviceScheduleWithRunLoop(pdd->devRef, CFRunLoopGetMain(), kCFRunLoopDefaultMode);
+    IOHIDDeviceRegisterInputReportCallback(pdd->devRef, pdd->report, sizeof(pdd->report), hidReportCallback, pdd);
   }
 
   void osxPointingDeviceManager::RemoveDevice(void *sender, IOReturn, void *, IOHIDDeviceRef devRef)
   {
     osxPointingDeviceManager *self = (osxPointingDeviceManager *)sender;
-    if (self->unregisterDevice(devRef))
-    {
-      IOHIDDeviceClose(devRef, kIOHIDOptionsTypeNone);
-    }
+    self->unregisterDevice(devRef);
   }
 
   osxPointingDeviceManager::osxPointingDeviceManager()
@@ -115,7 +112,8 @@ namespace pointing {
     if (!manager)
       throw std::runtime_error("IOHIDManagerCreate failed");
 
-    const char *plist = hidDeviceFromVendorProductUsagePageUsage(0, 0, kHIDPage_GenericDesktop, kHIDUsage_GD_Mouse).c_str();
+    std::string xml = hidDeviceFromVendorProductUsagePageUsage(0, 0, kHIDPage_GenericDesktop, kHIDUsage_GD_Mouse);
+    const char *plist = xml.c_str();
     CFMutableDictionaryRef device_match = (CFMutableDictionaryRef)getPropertyListFromXML(plist);
     IOHIDManagerSetDeviceMatching(manager, device_match);
 
@@ -136,30 +134,23 @@ namespace pointing {
     }
   }
 
-  void osxPointingDeviceManager::hidReportCallback(void *context, IOReturn, void *dev, IOHIDReportType, uint32_t, uint8_t *report, CFIndex)
+  void osxPointingDeviceManager::hidReportCallback(void *context, IOReturn, void *, IOHIDReportType, uint32_t, uint8_t *report, CFIndex)
   {
     // std::cerr << "hidReportCallback" << std::endl ;
     TimeStamp::inttime timestamp = TimeStamp::createAsInt();
 
-    osxPointingDeviceManager *self = static_cast<osxPointingDeviceManager *>(context);
-    IOHIDDeviceRef devRef = (IOHIDDeviceRef)dev;
+    osxPointingDeviceData *pdd = static_cast<osxPointingDeviceData *>(context);
 
-    auto it = self->devMap.find(devRef);
-
-    if (it != self->devMap.end())
+    if (pdd->parser.setReport(report))
     {
-      osxPointingDeviceData *pdd = static_cast<osxPointingDeviceData *>(it->second);
-      if (pdd->parser.setReport(report))
+      int dx = 0, dy = 0, buttons = 0;
+      pdd->parser.getReportData(&dx, &dy, &buttons) ;
+      for (SystemPointingDevice *device : pdd->pointingList)
       {
-        int dx = 0, dy = 0, buttons = 0;
-        pdd->parser.getReportData(&dx, &dy, &buttons) ;
-        for (SystemPointingDevice *device : pdd->pointingList)
-        {
-          osxPointingDevice *dev = static_cast<osxPointingDevice *>(device);
-          dev->registerTimestamp(timestamp, dx, dy);
-          if (dev->callback)
-            dev->callback(dev->callback_context, timestamp, dx, dy, buttons);
-        }
+        osxPointingDevice *dev = static_cast<osxPointingDevice *>(device);
+        dev->registerTimestamp(timestamp, dx, dy);
+        if (dev->callback)
+          dev->callback(dev->callback_context, timestamp, dx, dy, buttons);
       }
     }
   }
