@@ -48,6 +48,7 @@ install:
           sudo apt-get install -qq freeglut3-dev ;
       elif [ $TRAVIS_OS_NAME == osx ] ; then
           brew ls | grep -wq qt || brew install qt ;
+          brew link qt5 --force ;
       fi
     - git config --global user.email "libpointing@inria.fr"
     - git config --global user.name "Travis CI"
