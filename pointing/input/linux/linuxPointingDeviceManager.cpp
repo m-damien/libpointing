@@ -14,10 +14,12 @@
  */
 
 #include <pointing/input/linux/linuxPointingDeviceManager.h>
+
+#include <pointing/input/linux/XInputHelper.h>
+#include <pointing/utils/HIDReportParser.h>
 #include <pointing/utils/URI.h>
 
 #include <unistd.h>
-#include <pointing/input/linux/XInputHelper.h>
 
 #include <linux/input.h>
 #include <linux/hidraw.h>

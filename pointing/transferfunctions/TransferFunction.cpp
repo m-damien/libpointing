@@ -135,12 +135,6 @@ namespace pointing {
 #ifdef __APPLE__
       osxSystemPointerAcceleration sysAcc ;
       const char *target = uri.opaque.c_str();
-#ifndef POINTING_OSX
-      // Interpolated function
-      // was obtained only for mouse
-      if (!strlen(target))
-        target = "mouse";
-#endif
       double setting = sysAcc.get(target) ;
       if (!uri.query.empty()) {
         URI::getQueryArg(uri.query, "setting", &setting) ;

@@ -28,6 +28,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <pointing/input/PointingDeviceManager.h>
+#include <pointing/input/SystemPointingDevice.h>
 
 namespace pointing
 {

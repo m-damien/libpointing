@@ -18,7 +18,6 @@
 #include <list>
 #include <map>
 #include <pointing/utils/URI.h>
-#include <pointing/input/SystemPointingDevice.h>
 
 #ifdef __APPLE__
 #include <IOKit/hid/IOHIDManager.h>
@@ -39,6 +38,8 @@
 
 namespace pointing
 {
+    class SystemPointingDevice;
+
     struct PointingDeviceDescriptor
     {
         URI devURI;

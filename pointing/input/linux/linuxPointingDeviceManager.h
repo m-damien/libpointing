@@ -20,9 +20,10 @@
 #include <pointing/input/linux/linuxPointingDevice.h>
 #include <pthread.h>
 #include <libudev.h>
-#include <pointing/utils/HIDReportParser.h>
 
 namespace pointing {
+
+  class HIDReportParser;
 
   /**
    * @brief The linuxPointingDeviceManager class is the platform-specific
