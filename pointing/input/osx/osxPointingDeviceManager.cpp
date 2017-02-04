@@ -97,7 +97,8 @@ namespace pointing {
     if (!manager)
       throw std::runtime_error("IOHIDManagerCreate failed");
 
-    const char *plist = hidDeviceFromVendorProductUsagePageUsage(0, 0, kHIDPage_GenericDesktop, kHIDUsage_GD_Mouse).c_str();
+    std::string xml = hidDeviceFromVendorProductUsagePageUsage(0, 0, kHIDPage_GenericDesktop, kHIDUsage_GD_Mouse);
+    const char *plist = xml.c_str();
     CFMutableDictionaryRef device_match = (CFMutableDictionaryRef)getPropertyListFromXML(plist);
     IOHIDManagerSetDeviceMatching(manager, device_match);
 
