@@ -94,7 +94,7 @@ namespace pointing {
     fillDescriptorInfo(pdd->devRef, pdd->desc);
     // Note that, devRef and pdd->devRef are not the same.
     // devRef is the IOHIDManager's IOHIDDeviceRef.
-    self->registerDevice(pdd->devRef, pdd);
+    self->registerDevice(devRef, pdd);
     pdd->parser = parser;
     IOHIDDeviceScheduleWithRunLoop(pdd->devRef, CFRunLoopGetMain(), kCFRunLoopDefaultMode);
     IOHIDDeviceRegisterInputReportCallback(pdd->devRef, pdd->report, sizeof(pdd->report), hidReportCallback, pdd);
