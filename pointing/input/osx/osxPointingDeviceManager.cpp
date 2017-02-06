@@ -19,6 +19,7 @@
 #include <pointing/input/osx/osxPointingDevice.h>
 #include <pointing/utils/osx/osxPlistUtils.h>
 
+#include <iomanip>
 #include <stdexcept>
 
 namespace pointing {

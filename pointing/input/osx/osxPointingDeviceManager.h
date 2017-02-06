@@ -15,14 +15,9 @@
 #ifndef osxPointingDeviceManager_h
 #define osxPointingDeviceManager_h
 
-#include <iostream>
-#include <map>
-#include <list>
 #include <pointing/input/PointingDeviceManager.h>
 #include <IOKit/hid/IOHIDManager.h>
 #include <pointing/utils/HIDReportParser.h>
-
-#include <iomanip>
 
 namespace pointing
 {
