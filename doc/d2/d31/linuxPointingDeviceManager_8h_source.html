@@ -109,73 +109,74 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;pointing/input/linux/linuxPointingDevice.h&gt;</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;pthread.h&gt;</span></div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &lt;libudev.h&gt;</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &lt;pointing/utils/HIDReportParser.h&gt;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">namespace </span>pointing {</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
-<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="../../d6/d72/classpointing_1_1linuxPointingDeviceManager.html">   31</a></span>&#160;  <span class="keyword">class </span><a class="code" href="../../d6/d72/classpointing_1_1linuxPointingDeviceManager.html">linuxPointingDeviceManager</a> : <span class="keyword">public</span> <a class="code" href="../../d2/d48/classpointing_1_1PointingDeviceManager.html">PointingDeviceManager</a></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  {</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="../../d2/d48/classpointing_1_1PointingDeviceManager.html">PointingDeviceManager</a>;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="../../d3/dd1/classpointing_1_1linuxPointingDevice.html">linuxPointingDevice</a>;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="comment">// Add linux-specific data</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keyword">struct </span>linuxPointingDeviceData : <a class="code" href="../../df/d9f/structpointing_1_1PointingDeviceManager_1_1PointingDeviceData.html">PointingDeviceData</a></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    {</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      <span class="keywordtype">int</span> fd = -1;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;      pthread_t thread;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;      udev_device *evDev = NULL;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;      <span class="comment">// If there are several PointingDevice objects with seize</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;      <span class="comment">// corresponding to the same physical device</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;      <span class="comment">// Seize the device until all of them are deleted</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      <span class="keywordtype">int</span> seizeCount = 0;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;      <span class="keywordtype">int</span> buttons = 0;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;      std::string devnode;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    };</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keyword">struct </span>udev *udev;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keyword">struct </span>udev_monitor *monitor;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    pthread_t thread;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> cleanup_handler(<span class="keywordtype">void</span> *arg);</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> *eventloop(<span class="keywordtype">void</span> *<span class="keyword">self</span>);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> *checkReports(<span class="keywordtype">void</span> *<span class="keyword">self</span>);</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordtype">void</span> enableDevice(<span class="keywordtype">bool</span> value, std::string fullName);</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">void</span> monitor_readable();</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">void</span> readable(linuxPointingDeviceData *pdd);</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordtype">bool</span> outputsRelative(udev_device *dev);</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordtype">int</span> readHIDDescriptor(<span class="keywordtype">int</span> devID, HIDReportParser *parser);</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">void</span> fillDevInfo(udev_device *hiddev, linuxPointingDeviceData *pdd);</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">void</span> processMatching(<a class="code" href="../../df/d9f/structpointing_1_1PointingDeviceManager_1_1PointingDeviceData.html">PointingDeviceData</a> *pdd, <a class="code" href="../../d0/d54/classpointing_1_1SystemPointingDevice.html">SystemPointingDevice</a> *device);</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordtype">void</span> checkFoundDevice(udev_device *device);</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordtype">void</span> checkLostDevice(udev_device *device);</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordtype">void</span> unSeizeDevice(linuxPointingDeviceData *data);</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> removePointingDevice(<a class="code" href="../../d0/d54/classpointing_1_1SystemPointingDevice.html">SystemPointingDevice</a> *device) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <a class="code" href="../../d6/d72/classpointing_1_1linuxPointingDeviceManager.html">linuxPointingDeviceManager</a>();</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    ~<a class="code" href="../../d6/d72/classpointing_1_1linuxPointingDeviceManager.html">linuxPointingDeviceManager</a>();</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  };</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;}</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">namespace </span>pointing {</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="keyword">class </span>HIDReportParser;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
+<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="../../d6/d72/classpointing_1_1linuxPointingDeviceManager.html">   32</a></span>&#160;  <span class="keyword">class </span><a class="code" href="../../d6/d72/classpointing_1_1linuxPointingDeviceManager.html">linuxPointingDeviceManager</a> : <span class="keyword">public</span> <a class="code" href="../../d2/d48/classpointing_1_1PointingDeviceManager.html">PointingDeviceManager</a></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  {</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="../../d2/d48/classpointing_1_1PointingDeviceManager.html">PointingDeviceManager</a>;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="../../d3/dd1/classpointing_1_1linuxPointingDevice.html">linuxPointingDevice</a>;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="comment">// Add linux-specific data</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keyword">struct </span>linuxPointingDeviceData : <a class="code" href="../../df/d9f/structpointing_1_1PointingDeviceManager_1_1PointingDeviceData.html">PointingDeviceData</a></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    {</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;      <span class="keywordtype">int</span> fd = -1;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;      pthread_t thread;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;      udev_device *evDev = NULL;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;      <span class="comment">// If there are several PointingDevice objects with seize</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;      <span class="comment">// corresponding to the same physical device</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      <span class="comment">// Seize the device until all of them are deleted</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;      <span class="keywordtype">int</span> seizeCount = 0;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;      <span class="keywordtype">int</span> buttons = 0;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;      std::string devnode;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    };</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keyword">struct </span>udev *udev;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keyword">struct </span>udev_monitor *monitor;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    pthread_t thread;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> cleanup_handler(<span class="keywordtype">void</span> *arg);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> *eventloop(<span class="keywordtype">void</span> *<span class="keyword">self</span>);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> *checkReports(<span class="keywordtype">void</span> *<span class="keyword">self</span>);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">void</span> enableDevice(<span class="keywordtype">bool</span> value, std::string fullName);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">void</span> monitor_readable();</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordtype">void</span> readable(linuxPointingDeviceData *pdd);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordtype">bool</span> outputsRelative(udev_device *dev);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">int</span> readHIDDescriptor(<span class="keywordtype">int</span> devID, HIDReportParser *parser);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">void</span> fillDevInfo(udev_device *hiddev, linuxPointingDeviceData *pdd);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">void</span> processMatching(<a class="code" href="../../df/d9f/structpointing_1_1PointingDeviceManager_1_1PointingDeviceData.html">PointingDeviceData</a> *pdd, <a class="code" href="../../d0/d54/classpointing_1_1SystemPointingDevice.html">SystemPointingDevice</a> *device);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordtype">void</span> checkFoundDevice(udev_device *device);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordtype">void</span> checkLostDevice(udev_device *device);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordtype">void</span> unSeizeDevice(linuxPointingDeviceData *data);</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> removePointingDevice(<a class="code" href="../../d0/d54/classpointing_1_1SystemPointingDevice.html">SystemPointingDevice</a> *device) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <a class="code" href="../../d6/d72/classpointing_1_1linuxPointingDeviceManager.html">linuxPointingDeviceManager</a>();</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    ~<a class="code" href="../../d6/d72/classpointing_1_1linuxPointingDeviceManager.html">linuxPointingDeviceManager</a>();</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  };</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;}</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="classpointing_1_1linuxPointingDevice_html"><div class="ttname"><a href="../../d3/dd1/classpointing_1_1linuxPointingDevice.html">pointing::linuxPointingDevice</a></div><div class="ttdef"><b>Definition:</b> linuxPointingDevice.h:23</div></div>
-<div class="ttc" id="classpointing_1_1PointingDeviceManager_html"><div class="ttname"><a href="../../d2/d48/classpointing_1_1PointingDeviceManager.html">pointing::PointingDeviceManager</a></div><div class="ttdoc">The PointingDeviceManager class is a helper class which enumerates the list of existing pointing devi...</div><div class="ttdef"><b>Definition:</b> PointingDeviceManager.h:86</div></div>
+<div class="ttc" id="classpointing_1_1PointingDeviceManager_html"><div class="ttname"><a href="../../d2/d48/classpointing_1_1PointingDeviceManager.html">pointing::PointingDeviceManager</a></div><div class="ttdoc">The PointingDeviceManager class is a helper class which enumerates the list of existing pointing devi...</div><div class="ttdef"><b>Definition:</b> PointingDeviceManager.h:87</div></div>
 <div class="ttc" id="classpointing_1_1SystemPointingDevice_html"><div class="ttname"><a href="../../d0/d54/classpointing_1_1SystemPointingDevice.html">pointing::SystemPointingDevice</a></div><div class="ttdoc">The SystemPointingDevice class is used to represent Pointing Devices connected to the computer...</div><div class="ttdef"><b>Definition:</b> SystemPointingDevice.h:28</div></div>
-<div class="ttc" id="structpointing_1_1PointingDeviceManager_1_1PointingDeviceData_html"><div class="ttname"><a href="../../df/d9f/structpointing_1_1PointingDeviceManager_1_1PointingDeviceData.html">pointing::PointingDeviceManager::PointingDeviceData</a></div><div class="ttdef"><b>Definition:</b> PointingDeviceManager.h:96</div></div>
-<div class="ttc" id="classpointing_1_1linuxPointingDeviceManager_html"><div class="ttname"><a href="../../d6/d72/classpointing_1_1linuxPointingDeviceManager.html">pointing::linuxPointingDeviceManager</a></div><div class="ttdoc">The linuxPointingDeviceManager class is the platform-specific subclass of the PointingDeviceManager c...</div><div class="ttdef"><b>Definition:</b> linuxPointingDeviceManager.h:31</div></div>
+<div class="ttc" id="structpointing_1_1PointingDeviceManager_1_1PointingDeviceData_html"><div class="ttname"><a href="../../df/d9f/structpointing_1_1PointingDeviceManager_1_1PointingDeviceData.html">pointing::PointingDeviceManager::PointingDeviceData</a></div><div class="ttdef"><b>Definition:</b> PointingDeviceManager.h:97</div></div>
+<div class="ttc" id="classpointing_1_1linuxPointingDeviceManager_html"><div class="ttname"><a href="../../d6/d72/classpointing_1_1linuxPointingDeviceManager.html">pointing::linuxPointingDeviceManager</a></div><div class="ttdoc">The linuxPointingDeviceManager class is the platform-specific subclass of the PointingDeviceManager c...</div><div class="ttdef"><b>Definition:</b> linuxPointingDeviceManager.h:32</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Oct 31 2016 09:20:50 for Libpointing by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Feb 6 2017 22:04:46 for Libpointing by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="../../doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
