@@ -3,8 +3,8 @@
  * pointing/transferfunctions/TransferFunction.cpp --
  *
  * Initial software
- * Authors: Géry Casiez, Nicolas Roussel
- * Copyright © Inria
+ * Authors: GÃ©ry Casiez, Nicolas Roussel
+ * Copyright Â© Inria
  *
  * http://libpointing.org/
  *
@@ -136,7 +136,8 @@ namespace pointing {
       osxSystemPointerAcceleration sysAcc ;
       const char *target = uri.opaque.c_str();
       double setting = sysAcc.get(target) ;
-      if (!uri.query.empty()) {
+      // setting arg has to be defined
+      if (URI::getQueryArg(uri.query, "setting")) {
         URI::getQueryArg(uri.query, "setting", &setting) ;
         sysAcc.set(setting, target) ;
         setting = sysAcc.get(target) ;
@@ -155,7 +156,8 @@ namespace pointing {
       xorgSystemPointerAcceleration sysAcc(xorg_display) ;
       int num=0, den=0, thr=0 ;
       sysAcc.get(&num, &den, &thr) ;
-      if (!uri.query.empty()) {
+      // num, den and thr args have to be defined
+      if (URI::getQueryArg(uri.query, "num") && URI::getQueryArg(uri.query, "den") && URI::getQueryArg(uri.query, "thr")) {
 	URI::getQueryArg(uri.query, "num", &num) ;
 	URI::getQueryArg(uri.query, "den", &den) ;
 	URI::getQueryArg(uri.query, "thr", &thr) ;
@@ -175,9 +177,10 @@ namespace pointing {
       std::string winVersion;
       int sliderPosition;
       bool enhancePointerPrecision;
-      if (!uri.query.empty()) {
+      // slider and epp args have to be defined
+      if (URI::getQueryArg(uri.query, "slider") && URI::getQueryArg(uri.query, "epp")) {
         URI::getQueryArg(uri.query, "slider", &sliderPosition) ;
-        URI::getQueryArg(uri.query, "enhancePointerPrecision", &enhancePointerPrecision) ;
+        //URI::getQueryArg(uri.query, "enhancePointerPrecision", &enhancePointerPrecision) ;
         URI::getQueryArg(uri.query, "epp", &enhancePointerPrecision) ;
         sysAcc.set(sliderPosition, enhancePointerPrecision);
       }
