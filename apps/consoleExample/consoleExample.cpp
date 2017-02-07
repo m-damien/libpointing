@@ -47,7 +47,7 @@ pointingCallback(void * /*context*/, TimeStamp::inttime timestamp,
 int
 main(int argc, char** argv) {
   try {
-
+     std::cout << "Libpointing version " << LIBPOINTING_VER_STRING << std::endl;
     if (argc < 1)
       std::cerr << "Usage: " << argv[0]
 		<< " [inputdeviceURI [outputdeviceURI [transferfunctionURI]]]"
