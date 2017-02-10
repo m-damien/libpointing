@@ -88,8 +88,23 @@ namespace pointing
     {
       friend class SystemPointingDevice;
 
-    protected:
+    private:
+        PointingDescriptorSet descriptors;
 
+        void addDescriptor(PointingDeviceDescriptor &descriptor);
+        void removeDescriptor(PointingDeviceDescriptor &descriptor);
+
+        std::set<CallbackInfo> callbackInfos;
+
+        void callCallbackFunctions(PointingDeviceDescriptor &descriptor, bool wasAdded);
+
+        static PointingDeviceManager *singleManager;
+
+        void convertAnyCandidates();
+
+        void matchCandidates();
+
+    protected:
         typedef std::list<SystemPointingDevice *> PointingList;
 
         // This struct can be extended in subclasses to add
@@ -103,26 +118,8 @@ namespace pointing
 
         std::map<identifier, PointingDeviceData *> devMap;
 
-        DeviceUpdateCallback callback = NULL;
-
-        virtual ~PointingDeviceManager(void) {}
-        static PointingDeviceManager *singleManager;
-
-        PointingDescriptorSet descriptors;
-
-        std::set<CallbackInfo> callbackInfos;
-
-        void callCallbackFunctions(PointingDeviceDescriptor &descriptor, bool wasAdded);
-
-        void addDescriptor(PointingDeviceDescriptor &descriptor);
-        void removeDescriptor(PointingDeviceDescriptor &descriptor);
-
         PointingList candidates;
         int debugLevel = 0;
-
-        void convertAnyCandidates();
-
-        void matchCandidates();
 
         // Should be implemented by a subclass
         virtual void processMatching(PointingDeviceData *pdd, SystemPointingDevice *device)=0;
@@ -202,6 +199,8 @@ namespace pointing
         PointingDescriptorIterator begin() { return descriptors.begin(); }
         PointingDescriptorIterator end() { return descriptors.end(); }
         //@}
+
+        virtual ~PointingDeviceManager(void) {}
     };
 }
 

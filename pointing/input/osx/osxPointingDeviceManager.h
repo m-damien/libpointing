@@ -57,5 +57,4 @@ namespace pointing
   };
 }
 
-
 #endif
