@@ -1,9 +1,9 @@
-/* -*- mode: c++ -*-
+ /* -*- mode: c++ -*-
  *
  * pointing/utils/TimeStamp.cpp --
  *
  * Initial software
- * Authors: Nicolas Roussel
+ * Authors: Nicolas Roussel, Gery Casiez
  * Copyright © Inria
  *
  * http://libpointing.org/
@@ -36,6 +36,10 @@
 
 #ifdef __APPLE__
 #include <mach/mach_time.h>
+#endif
+
+#ifdef _WIN32
+#include <windows.h>
 #endif
 
 namespace pointing {
@@ -139,12 +143,33 @@ namespace pointing {
     }
     uint64_t elapsedNano = (mach_absolute_time()-epoch_mach) * sTimebaseInfo.numer / sTimebaseInfo.denom ;
     return epoch + elapsedNano*TimeStamp::one_nanosecond ;
+#elif _WIN32
+    static uint64_t epoch ;
+    static double freq;
+    static LARGE_INTEGER li;
+    static bool once = true;
+    LARGE_INTEGER li2;
+    if (once) {
+        once = false;
+         if(!QueryPerformanceFrequency(&li))
+             std::runtime_error("QueryPerformanceFrequency failed!");
+         freq = double(li.QuadPart);
+         struct timeval stamp ;
+         gettimeofday(&stamp, 0) ;
+         epoch = (inttime)stamp.tv_sec*one_second +  (inttime)stamp.tv_usec*one_microsecond ;
+         QueryPerformanceCounter(&li);
+         return epoch ;
+    }
+    QueryPerformanceCounter(&li2);
+    uint64_t elapsedMicros = double(li2.QuadPart-li.QuadPart)/freq*1000000;
+    return epoch + elapsedMicros*one_microsecond ;
 #else
     struct timeval stamp ;
     gettimeofday(&stamp, 0) ;
     return (inttime)stamp.tv_sec*one_second +  (inttime)stamp.tv_usec*one_microsecond ;
 #endif
   }
+
 
   TimeStamp::inttime 
   TimeStamp::string2int(std::string s) {
