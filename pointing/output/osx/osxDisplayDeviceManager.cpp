@@ -88,7 +88,8 @@ namespace pointing
                                      &vendorID);
           success &= CFNumberGetValue(productIDRef, kCFNumberCFIndexType,
                                       &productID);
-          success &= CFNumberGetValue(serialNumberRef, kCFNumberCFIndexType,
+          if (serialNumberRef != 0)
+            success &= CFNumberGetValue(serialNumberRef, kCFNumberCFIndexType,
                                       &serialNumber);
 
           if (!success)
