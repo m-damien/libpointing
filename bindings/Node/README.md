@@ -8,19 +8,19 @@ Read this to learn how to write bindings
 	* Stable Node.js
 	* npm (Node package manager) (For ubuntu: `sudo apt-get install npm`)
 	* Python version > 2.7
-	* node-gyp (`sudo npm install -g node-gyp`)
+	* node-gyp (`npm install -g node-gyp`)
 
 2. Install libpointing and link it in *libpointing/binding.gyp* 
 
-3. In the current folder install nan with `npm install nan`
+3. In the current folder install nan with `npm install nan`.
 
 ## Compilation
 
-* Run `make`, which will execute `node-gyp configure build`
+* Run `node-gyp configure build` in the *libpointing* folder.
 
 ## Running
 
-You can run *consoleExample.js* to test the bindings with `node consoleExample.js`
+You can run *consoleExample.js* to test the bindings with `node consoleExample.js`.
 
 # Server app
 
@@ -47,4 +47,4 @@ Follow these instructions to build the nw-app for Windows:
 
 1. In *Node/nw*-folder run `npm install`
 
-1. Run `node builder.js` (Make sure the target is the same)
+1. Run `node builder.js` (Make sure the target is the same).

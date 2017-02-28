@@ -83,7 +83,6 @@ namespace pointing {
     linuxPointingDeviceManager();
     ~linuxPointingDeviceManager();
   };
-
 }
 
 #endif
