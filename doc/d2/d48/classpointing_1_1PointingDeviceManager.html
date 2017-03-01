@@ -93,7 +93,6 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search');
 <a href="#pro-types">Protected Types</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
-<a href="#pro-static-attribs">Static Protected Attributes</a> &#124;
 <a href="#friends">Friends</a> &#124;
 <a href="../../d9/d07/classpointing_1_1PointingDeviceManager-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -165,21 +164,6 @@ typedef std::list<br class="typebreak"/>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:ac4268bded63aac153fdccc0f2ef6dc2e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac4268bded63aac153fdccc0f2ef6dc2e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>callCallbackFunctions</b> (<a class="el" href="../../df/d74/structpointing_1_1PointingDeviceDescriptor.html">PointingDeviceDescriptor</a> &amp;descriptor, bool wasAdded)</td></tr>
-<tr class="separator:ac4268bded63aac153fdccc0f2ef6dc2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abbad848da7f691779c24dc8504f78c7a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abbad848da7f691779c24dc8504f78c7a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>addDescriptor</b> (<a class="el" href="../../df/d74/structpointing_1_1PointingDeviceDescriptor.html">PointingDeviceDescriptor</a> &amp;descriptor)</td></tr>
-<tr class="separator:abbad848da7f691779c24dc8504f78c7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4fe6ee353230c5a2cadf15b30d2047b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa4fe6ee353230c5a2cadf15b30d2047b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>removeDescriptor</b> (<a class="el" href="../../df/d74/structpointing_1_1PointingDeviceDescriptor.html">PointingDeviceDescriptor</a> &amp;descriptor)</td></tr>
-<tr class="separator:aa4fe6ee353230c5a2cadf15b30d2047b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0e6f9dafc4b0384577c5bfa16e31bf47"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0e6f9dafc4b0384577c5bfa16e31bf47"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>convertAnyCandidates</b> ()</td></tr>
-<tr class="separator:a0e6f9dafc4b0384577c5bfa16e31bf47"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea1545140c5992f55ef25f83046e13ab"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aea1545140c5992f55ef25f83046e13ab"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>matchCandidates</b> ()</td></tr>
-<tr class="separator:aea1545140c5992f55ef25f83046e13ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3b4af10f1dd730231b17fe2d8172a9e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af3b4af10f1dd730231b17fe2d8172a9e"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>processMatching</b> (<a class="el" href="../../df/d9f/structpointing_1_1PointingDeviceManager_1_1PointingDeviceData.html">PointingDeviceData</a> *pdd, <a class="el" href="../../d0/d54/classpointing_1_1SystemPointingDevice.html">SystemPointingDevice</a> *device)=0</td></tr>
 <tr class="separator:af3b4af10f1dd730231b17fe2d8172a9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -214,27 +198,12 @@ Protected Attributes</h2></td></tr>
 std::map&lt; identifier, <br class="typebreak"/>
 <a class="el" href="../../df/d9f/structpointing_1_1PointingDeviceManager_1_1PointingDeviceData.html">PointingDeviceData</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>devMap</b></td></tr>
 <tr class="separator:a9432fb9d99378301c44e4756c06b041f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa86e449c94ce96b808ff2b61a58a2369"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa86e449c94ce96b808ff2b61a58a2369"></a>
-DeviceUpdateCallback&#160;</td><td class="memItemRight" valign="bottom"><b>callback</b> = NULL</td></tr>
-<tr class="separator:aa86e449c94ce96b808ff2b61a58a2369"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2c12dff32668d4b57bb5febccbe2652"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab2c12dff32668d4b57bb5febccbe2652"></a>
-PointingDescriptorSet&#160;</td><td class="memItemRight" valign="bottom"><b>descriptors</b></td></tr>
-<tr class="separator:ab2c12dff32668d4b57bb5febccbe2652"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad10931ee11fa47af546a04b7fcdacf5b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad10931ee11fa47af546a04b7fcdacf5b"></a>
-std::set&lt; <a class="el" href="../../d8/da6/structpointing_1_1CallbackInfo.html">CallbackInfo</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>callbackInfos</b></td></tr>
-<tr class="separator:ad10931ee11fa47af546a04b7fcdacf5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2dfdc96337979a8ff9cb84a09703aabc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2dfdc96337979a8ff9cb84a09703aabc"></a>
 PointingList&#160;</td><td class="memItemRight" valign="bottom"><b>candidates</b></td></tr>
 <tr class="separator:a2dfdc96337979a8ff9cb84a09703aabc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a963f3b2e37bb80ec0b89909fc1606ce4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a963f3b2e37bb80ec0b89909fc1606ce4"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>debugLevel</b> = 0</td></tr>
 <tr class="separator:a963f3b2e37bb80ec0b89909fc1606ce4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-attribs"></a>
-Static Protected Attributes</h2></td></tr>
-<tr class="memitem:ad61c92ba8a95339ba86f6c99268f662e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad61c92ba8a95339ba86f6c99268f662e"></a>
-static <a class="el" href="../../d2/d48/classpointing_1_1PointingDeviceManager.html">PointingDeviceManager</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>singleManager</b> = 0</td></tr>
-<tr class="separator:ad61c92ba8a95339ba86f6c99268f662e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
@@ -372,7 +341,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>SystemPointingDevice
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Feb 16 2017 14:46:25 for Libpointing by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 1 2017 08:08:14 for Libpointing by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="../../doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
