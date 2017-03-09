@@ -1,6 +1,6 @@
 /* -*- mode: c++ -*-
  *
- * pointing/input/linux/SystemPointingDevice.cpp --
+ * pointing/input/SystemPointingDevice.cpp --
  *
  * Initial software
  * Authors: Nicolas Roussel, Izzat Mukhanov
