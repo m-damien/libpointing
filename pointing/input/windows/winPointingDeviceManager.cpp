@@ -184,22 +184,24 @@ namespace pointing
 
       switch(wParam)
       {
-      case GIDC_ARRIVAL:
-      {
-          PointingDeviceDescriptor desc;
-          if (self->fillDescriptorInfo((HANDLE)lParam, desc))
+          case GIDC_ARRIVAL:
           {
-              PointingDeviceData *pdd = new PointingDeviceData;
-              pdd->desc = desc;
-              std::string key = uriForHandle(lParam).asString()
-              self->registerDevice(key, pdd);
+              PointingDeviceDescriptor desc;
+              if (self->fillDescriptorInfo((HANDLE)lParam, desc))
+              {
+                  PointingDeviceData *pdd = new PointingDeviceData;
+                  pdd->desc = desc;
+                  std::string key = uriForHandle((HANDLE)lParam).asString();
+                  self->registerDevice(key, pdd);
+              }
+              break;
           }
-          break;
-      }
-      case GIDC_REMOVAL:
-          std::string key = uriForHandle(lParam).asString()
-          self->unregisterDevice(key);
-          break;
+          case GIDC_REMOVAL:
+          {
+              std::string key = uriForHandle((HANDLE)lParam).asString();
+              self->unregisterDevice(key);
+              break;
+          }
       }
 
       return 0;
@@ -228,7 +230,8 @@ namespace pointing
       if (raw->header.dwType == RIM_TYPEMOUSE)
       {
         //std::cout << "Input frame  from: " << std::hex << raw->header.hDevice << std::endl;
-        auto it = self->devMap.find(raw->header.hDevice);
+        std::string key = uriForHandle(raw->header.hDevice).asString();
+        auto it = self->devMap.find(key);
         if(it != self->devMap.end())
         {
           TimeStamp::inttime now = TimeStamp::createAsInt();
