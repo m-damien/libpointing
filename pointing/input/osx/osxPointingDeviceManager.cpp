@@ -95,7 +95,8 @@ namespace pointing {
     fillDescriptorInfo(pdd->devRef, pdd->desc);
     // Note that, devRef and pdd->devRef are not the same.
     // devRef is the IOHIDManager's IOHIDDeviceRef.
-    self->registerDevice(devRef, pdd);
+    std::string key = hidDeviceURI(devRef).asString();
+    self->registerDevice(key, pdd);
     pdd->parser = parser;
     IOHIDDeviceScheduleWithRunLoop(pdd->devRef, CFRunLoopGetMain(), kCFRunLoopDefaultMode);
     IOHIDDeviceRegisterInputReportCallback(pdd->devRef, pdd->report, sizeof(pdd->report), hidReportCallback, pdd);
@@ -104,7 +105,8 @@ namespace pointing {
   void osxPointingDeviceManager::RemoveDevice(void *sender, IOReturn, void *, IOHIDDeviceRef devRef)
   {
     osxPointingDeviceManager *self = (osxPointingDeviceManager *)sender;
-    self->unregisterDevice(devRef);
+    std::string key = hidDeviceURI(devRef).asString();
+    self->unregisterDevice(key);
   }
 
   osxPointingDeviceManager::osxPointingDeviceManager()

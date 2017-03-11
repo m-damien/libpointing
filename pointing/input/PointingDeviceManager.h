@@ -19,18 +19,8 @@
 #include <map>
 #include <pointing/utils/URI.h>
 
-#ifdef __APPLE__
-#include <IOKit/hid/IOHIDManager.h>
-#define identifier IOHIDDeviceRef
-#endif
-
 #ifdef __linux__
 #define identifier std::string
-#endif
-
-#ifdef _WIN32
-#include <windows.h>
-#define identifier HANDLE
 #endif
 
 #ifndef POINTINGDEVICEMANAGER_H
@@ -116,7 +106,7 @@ namespace pointing
           virtual ~PointingDeviceData() {}
         };
 
-        std::map<identifier, PointingDeviceData *> devMap;
+        std::map<std::string, PointingDeviceData *> devMap;
 
         PointingList candidates;
         int debugLevel = 0;
@@ -132,8 +122,8 @@ namespace pointing
          * @param pdd Pointer to the platform-specific data associated with the device
          */
         //@{
-        void registerDevice(identifier key, PointingDeviceData *pdd);
-        bool unregisterDevice(identifier);
+        void registerDevice(std::string key, PointingDeviceData *pdd);
+        bool unregisterDevice(std::string key);
         //@}
 
         void printDeviceInfo(PointingDeviceData *pdd, bool add);

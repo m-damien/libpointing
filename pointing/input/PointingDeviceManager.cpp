@@ -29,6 +29,7 @@
 #include <iostream>
 #include <pointing/input/PointingDeviceManager.h>
 #include <pointing/input/SystemPointingDevice.h>
+#include <assert.h>
 
 namespace pointing
 {
@@ -223,8 +224,10 @@ namespace pointing
     */
     }
 
-    void PointingDeviceManager::registerDevice(identifier key, PointingDeviceData *pdd)
+    void PointingDeviceManager::registerDevice(std::string key, PointingDeviceData *pdd)
     {
+        // Key must be unique.
+        assert(devMap.find(key) == devMap.end());
         devMap[key] = pdd;
         addDescriptor(pdd->desc);
         matchCandidates();
@@ -232,7 +235,7 @@ namespace pointing
         if (debugLevel > 0) printDeviceInfo(pdd, true);
     }
 
-    bool PointingDeviceManager::unregisterDevice(identifier key)
+    bool PointingDeviceManager::unregisterDevice(std::string key)
     {
         auto it = devMap.find(key);
         if (it != devMap.end())

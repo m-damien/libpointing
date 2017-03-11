@@ -191,12 +191,14 @@ namespace pointing
           {
               PointingDeviceData *pdd = new PointingDeviceData;
               pdd->desc = desc;
-              self->registerDevice((HANDLE)lParam, pdd);
+              std::string key = uriForHandle(lParam).asString()
+              self->registerDevice(key, pdd);
           }
           break;
       }
       case GIDC_REMOVAL:
-          self->unregisterDevice((HANDLE)lParam);
+          std::string key = uriForHandle(lParam).asString()
+          self->unregisterDevice(key);
           break;
       }
 
