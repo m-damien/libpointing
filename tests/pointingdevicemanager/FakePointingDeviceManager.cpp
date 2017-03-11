@@ -1,6 +1,6 @@
 /* -*- mode: c++ -*-
  *
- * pointing/input/FakePointingDeviceManager.cpp --
+ * pointing/tests/pointingdevicemanager/FakePointingDeviceManager.cpp --
  *
  * Initial software
  * Authors: Izzatbek Mukhanov

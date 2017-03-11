@@ -1,6 +1,6 @@
 /* -*- mode: c++ -*-
  *
- * pointing/input/FakeSystemPointingDevice.cpp --
+ * pointing/tests/pointingdevicemanager/FakeSystemPointingDevice.cpp --
  *
  * Initial software
  * Authors: Izzat Mukhanov
@@ -27,9 +27,4 @@ FakeSystemPointingDevice::FakeSystemPointingDevice(URI uri) : SystemPointingDevi
 FakeSystemPointingDevice::~FakeSystemPointingDevice()
 {
   FakePointingDeviceManager::get()->removePointingDevice(this);
-}
-
-void callPointingCallbacks()
-{
-  
 }

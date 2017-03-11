@@ -1,6 +1,6 @@
 /* -*- mode: c++ -*-
  *
- * pointing/input/FakePointingDeviceManager.h --
+ * pointing/tests/pointingdevicemanager/FakePointingDeviceManager.h --
  *
  * Initial software
  * Authors: Izzatbek Mukhanov
@@ -33,20 +33,26 @@ namespace pointing
 
   public:
     /**
-     * TODO
+     * Adds fake physical pointing device and calls DeviceUpdateCallback callback with wasAdded = true.
+     * @param desc Parameter that should contain the fake URI and optional description parameters.
      */
     void addDevice(const PointingDeviceDescriptor& desc);
 
     /**
-     * TODO
+     * Removes fake physical pointing device and calls DeviceUpdateCallback callback with wasAdded = false.
+     * @param desc Parameter that should contain the fake URI and optional description parameters.
      */
     void removeDevice(const PointingDeviceDescriptor& desc);
 
     /**
-     * TODO
+     * @return singleton FakePointingDeviceManager object.
      */
     static FakePointingDeviceManager* get();
 
+    /**
+     * This method fakes a pointing callback.
+     * @param devURI Must correspond to one of the device devURIs listed in FakePointingDeviceManager.
+     */
     void callPointingCallbacks(std::string devURI, int dx, int dy, int buttons);
 
   };

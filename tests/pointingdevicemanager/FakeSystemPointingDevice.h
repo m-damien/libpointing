@@ -1,6 +1,6 @@
 /* -*- mode: c++ -*-
  *
- * pointing/input/FakeSystemPointingDevice.h --
+ * pointing/tests/pointingdevicemanager/FakeSystemPointingDevice.h --
  *
  * Initial software
  * Authors: Izzat Mukhanov
@@ -21,13 +21,14 @@
 namespace pointing {
 
   /**
-   * TODO
-   *
+   * FakeSystemPointingDevice is used to test SystemPointingDevice and PointingDeviceManager classes
    */
   class FakeSystemPointingDevice : public SystemPointingDevice
   {
     friend class FakePointingDeviceManager;
+
   public:
+
     FakeSystemPointingDevice(URI uri);
 
     virtual ~FakeSystemPointingDevice();

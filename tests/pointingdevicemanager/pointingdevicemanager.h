@@ -12,8 +12,8 @@ using namespace pointing;
 using namespace std;
 
 /**
- * As PointingDeviceManager is used only with SystemPointingDevices.
- * We will use instances of SystemPointingDevice and FakePointingDeviceManager.
+ * Since PointingDeviceManager is used only with SystemPointingDevices,
+ * we will use instances of FakeSystemPointingDevice and FakePointingDeviceManager.
  */
 class PointingDeviceManagerTest : public QObject
 {
@@ -30,6 +30,7 @@ class PointingDeviceManagerTest : public QObject
 
 private slots:
 
+  // Test if the initialization works fine
   void initManager()
   {
     FakePointingDeviceManager* manager = FakePointingDeviceManager::get();
@@ -85,6 +86,8 @@ private slots:
     delete device;
     delete device2;
   }
+
+  // TODO Test callbacks when devices are added and removed
 };
 
 int PointingDeviceManagerTest::x = 0;

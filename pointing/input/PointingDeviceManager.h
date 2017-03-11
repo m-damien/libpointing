@@ -13,18 +13,14 @@
  *
  */
 
+#ifndef POINTINGDEVICEMANAGER_H
+#define POINTINGDEVICEMANAGER_H
+
 #include <set>
 #include <string>
 #include <list>
 #include <map>
 #include <pointing/utils/URI.h>
-
-#ifdef __linux__
-#define identifier std::string
-#endif
-
-#ifndef POINTINGDEVICEMANAGER_H
-#define POINTINGDEVICEMANAGER_H
 
 namespace pointing
 {
