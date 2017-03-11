@@ -7,3 +7,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += interpolation subpixel hidreportparser pointingdevice frequencyestimator
+
+macx {
+  SUBDIRS += pointingdevicemanager
+}
