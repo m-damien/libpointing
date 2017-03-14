@@ -137,8 +137,7 @@ namespace pointing {
       const char *target = uri.opaque.c_str();
       double setting = sysAcc.get(target) ;
       // setting arg has to be defined
-      if (URI::getQueryArg(uri.query, "setting")) {
-        URI::getQueryArg(uri.query, "setting", &setting) ;
+      if (URI::getQueryArg(uri.query, "setting", &setting)) {
         sysAcc.set(setting, target) ;
         setting = sysAcc.get(target) ;
       }
@@ -157,13 +156,10 @@ namespace pointing {
       int num=0, den=0, thr=0 ;
       sysAcc.get(&num, &den, &thr) ;
       // num, den and thr args have to be defined
-      if (URI::getQueryArg(uri.query, "num") && URI::getQueryArg(uri.query, "den") && URI::getQueryArg(uri.query, "thr")) {
-	URI::getQueryArg(uri.query, "num", &num) ;
-	URI::getQueryArg(uri.query, "den", &den) ;
-	URI::getQueryArg(uri.query, "thr", &thr) ;
-	sysAcc.set(num, den, thr) ;
+      if (URI::getQueryArg(uri.query, "num", &num) && URI::getQueryArg(uri.query, "den", &den) && URI::getQueryArg(uri.query, "thr", &thr)) {
+        sysAcc.set(num, den, thr) ;
+        sysAcc.get(&num, &den, &thr) ;
       }
-      sysAcc.get(&num, &den, &thr) ;
       uri.scheme = "xorg" ;
       std::stringstream q ;
       q << "num=" << num << "&den=" << den << "&thr=" << thr ;
@@ -178,10 +174,7 @@ namespace pointing {
       int sliderPosition;
       bool enhancePointerPrecision;
       // slider and epp args have to be defined
-      if (URI::getQueryArg(uri.query, "slider") && URI::getQueryArg(uri.query, "epp")) {
-        URI::getQueryArg(uri.query, "slider", &sliderPosition) ;
-        //URI::getQueryArg(uri.query, "enhancePointerPrecision", &enhancePointerPrecision) ;
-        URI::getQueryArg(uri.query, "epp", &enhancePointerPrecision) ;
+      if (URI::getQueryArg(uri.query, "slider", &sliderPosition) && URI::getQueryArg(uri.query, "epp", &enhancePointerPrecision)) {
         sysAcc.set(sliderPosition, enhancePointerPrecision);
       }
       sysAcc.get(&winVersion,&sliderPosition,&enhancePointerPrecision);
