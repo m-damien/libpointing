@@ -61,6 +61,8 @@ namespace pointing {
 
     URI devUri = hidDeviceURI(device) ;
 
+    // std::cerr << std::endl << self->uri.asString() << std::endl << devUri.asString() << std::endl << std::endl ;
+
     bool match = self->theDevice==0 && (self->uri.isEmpty() || self->uri.scheme=="any" || self->uri.resemble(devUri)) ;
     if (self->debugLevel>0) {
       std::cerr << (match?"+ ":"  ") ;

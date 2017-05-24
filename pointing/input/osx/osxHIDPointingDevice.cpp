@@ -53,12 +53,19 @@ namespace pointing {
     URI::getQueryArg(uri.query, "product", &productID) ;
     URI::getQueryArg(uri.query, "usagePage", &primaryUsagePage) ;
     URI::getQueryArg(uri.query, "usage", &primaryUsage) ;
+
+    if (uri.scheme=="osxhid-legacy")
+      uri.scheme = "osxhid" ; // FIXME: otherwise, won't match in osxHIDInputDevice (might want to fix this)
+
     if (vendorID || productID)
       uri.scheme = "any" ; // FIXME: otherwise, won't match in osxHIDInputDevice (might want to fix this)
 
     std::string plist = hidDeviceFromVendorProductUsagePageUsage(vendorID, productID,
 								 primaryUsagePage, primaryUsage) ;
     hiddev = new osxHIDInputDevice(uri, plist.c_str()) ;    
+
+    if (hiddev->debugLevel)
+      std::cerr << "osxHIDInputDevice: hiddev created" << std::endl ;
 
     callback = 0 ;
     callback_context = 0 ;
