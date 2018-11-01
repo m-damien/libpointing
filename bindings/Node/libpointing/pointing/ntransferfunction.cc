@@ -63,7 +63,7 @@ NAN_METHOD(NTransferFunction::New)
 {
   if (info.IsConstructCall()) {
     // Invoked as constructor: `new MyObject(...)
-    String::Utf8Value str(info[0]->ToString());
+    Nan::Utf8String str(info[0]->ToString());
     std::string uri(*str);
     NPointingDevice *ninput = ObjectWrap::Unwrap<NPointingDevice>(info[1]->ToObject());
     NDisplayDevice *noutput = ObjectWrap::Unwrap<NDisplayDevice>(info[2]->ToObject());

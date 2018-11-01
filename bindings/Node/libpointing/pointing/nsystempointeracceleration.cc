@@ -42,7 +42,7 @@ NAN_METHOD(NSystemPointerAcceleration::get)
     Local<Object> argsObj = info[0]->ToObject();
     if (Nan::Has(argsObj, Nan::New("target").ToLocalChecked()).FromMaybe(false))
       tarStr = Nan::Get(argsObj, Nan::New("target").ToLocalChecked()).ToLocalChecked();
-    String::Utf8Value target(tarStr->ToString());
+    Nan::Utf8String target(tarStr->ToString());
     res = acc.get(*target);
   }
   else
@@ -81,7 +81,7 @@ NAN_METHOD(NSystemPointerAcceleration::set)
     Local<Value> tarStr = Nan::New("mouse").ToLocalChecked();
     if (Nan::Has(argsObj, Nan::New("target").ToLocalChecked()).FromMaybe(false))
       tarStr = Nan::Get(argsObj, Nan::New("target").ToLocalChecked()).ToLocalChecked();
-    String::Utf8Value target(tarStr->ToString());
+    Nan::Utf8String target(tarStr->ToString());
     osxSystemPointerAcceleration acc;
     acc.set(value, *target);
   }

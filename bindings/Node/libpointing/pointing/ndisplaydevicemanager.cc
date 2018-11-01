@@ -59,7 +59,8 @@ void callAllCallbacks(const DisplayDeviceDescriptor &descriptor, bool wasAdded)
     Local<Value> argv[] = {
       descObj, Nan::New<Number>(wasAdded)
     };
-    it->second->Call(2, argv);
+    Nan::AsyncResource resource("libpointing:npdisplaydevicemanager::callAllCallbacks");
+    it->second->Call(2, argv, &resource);
   }
 }
 
@@ -135,7 +136,7 @@ NAN_METHOD(NDisplayDeviceManager::New)
 
 NAN_METHOD(NDisplayDeviceManager::addDeviceUpdateCallback)
 {
-  callbackMap[*String::Utf8Value(info[0].As<String>())] = new Nan::Callback(info[0].As<Function>());
+  callbackMap[*Nan::Utf8String(info[0].As<String>())] = new Nan::Callback(info[0].As<Function>());
 
   info.GetReturnValue().Set(info.This());
 }
@@ -143,7 +144,7 @@ NAN_METHOD(NDisplayDeviceManager::addDeviceUpdateCallback)
 
 NAN_METHOD(NDisplayDeviceManager::removeDeviceUpdateCallback)
 {
-  callbackMap.erase(*String::Utf8Value(info[0].As<String>()));
+  callbackMap.erase(*Nan::Utf8String(info[0].As<String>()));
   
   info.GetReturnValue().Set(info.This());
 }

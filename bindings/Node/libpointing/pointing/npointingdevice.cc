@@ -34,7 +34,8 @@ void NPointingDevice::callCallback(TimeStamp::inttime timestamp, int dx, int dy,
   
   if (!callback.IsEmpty())
   {
-    callback.Call(4, argv);
+    Nan::AsyncResource resource("libpointing:NPointingDevice::callCallback");
+    callback.Call(4, argv, &resource);
   }
 }
 
@@ -123,7 +124,7 @@ NAN_MODULE_INIT(NPointingDevice::Init)
 NAN_METHOD(NPointingDevice::New)
 {
   if (info.IsConstructCall()) {
-    String::Utf8Value str(info[0]->ToString());
+    Nan::Utf8String str(info[0]->ToString());
     std::string uri(*str);
     NPointingDevice* obj = new NPointingDevice(uri);
     obj->Wrap(info.This());

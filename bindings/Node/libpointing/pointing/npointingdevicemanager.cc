@@ -62,7 +62,8 @@ void callAllCallbacks(const PointingDeviceDescriptor &descriptor, bool wasAdded)
     Local<Value> argv[] = {
       descObj, Nan::New<Number>(wasAdded)
     };
-    it->second->Call(2, argv);
+    Nan::AsyncResource resource("libpointing:npointingdevicemanager::callAllCallbacks");
+    it->second->Call(2, argv, &resource);
   }
 }
 
@@ -138,14 +139,14 @@ NAN_METHOD(NPointingDeviceManager::New)
 
 NAN_METHOD(NPointingDeviceManager::addDeviceUpdateCallback)
 {
-  callbackMap[*String::Utf8Value(info[0].As<String>())] = new Nan::Callback(info[0].As<Function>());
+  callbackMap[*Nan::Utf8String(info[0].As<String>())] = new Nan::Callback(info[0].As<Function>());
 
   info.GetReturnValue().Set(info.This());
 }
 
 NAN_METHOD(NPointingDeviceManager::removeDeviceUpdateCallback) {
  
-  callbackMap.erase(*String::Utf8Value(info[0].As<String>()));
+  callbackMap.erase(*Nan::Utf8String(info[0].As<String>()));
   
   info.GetReturnValue().Set(info.This());
 }

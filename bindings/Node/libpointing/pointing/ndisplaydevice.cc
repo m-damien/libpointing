@@ -58,7 +58,7 @@ NAN_METHOD(NDisplayDevice::New)
 {
   if (info.IsConstructCall())
   {
-    String::Utf8Value str(info[0]->ToString());
+    Nan::Utf8String str(info[0]->ToString());
     std::string uri(*str);
     NDisplayDevice* obj = new NDisplayDevice(uri);
     obj->Wrap(info.This());
