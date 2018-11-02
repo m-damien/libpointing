@@ -1,111 +1,113 @@
-#include <fstream>
-#include <iostream>
-#include <vector>
-#include <pointing-win/transferfunctions/WindowsFunction.h>
+/* -*- mode: c++ -*-
+ *
+ * apps/consoleExample/consoleExample.cpp --
+ *
+ * Initial software
+ * Authors: Gery Casiez, Nicolas Roussel
+ * Copyright © Inria
+ *
+ * http://libpointing.org/
+ *
+ * This software may be used and distributed according to the terms of
+ * the GNU General Public License version 2 or any later version.
+ *
+ */
 
+#include <pointing/pointing.h>
 
-struct DataRow
-{
-    int countX;
-    int countY;
-    int screenX;
-    int screenY;
-    int guessX;
-    int guessY;
-    int matlabX;
-    int matlabY;
-};
+#include <iomanip>
+#include <stdexcept>
 
+using namespace pointing ;
 
-void DisplayMyURI (pointing::URI &uri)
-{
-    std::cout << "scheme: " << uri.scheme << ", opaque: " << uri.opaque << std::endl;
-    int slider;
-    pointing::URI::getQueryArg(uri.query, "slider", &slider);
-    std::cout << "Query(slider): " << slider << std::endl;
+TransferFunction *func = 0 ;
+TimeStamp::inttime last_time = 0 ;
+bool button_pressed = false ;
+
+void
+pointingCallback(void * /*context*/, TimeStamp::inttime timestamp,
+		 int input_dx, int input_dy, int buttons) {
+  if (!func) return ;
+
+  int output_dx=0, output_dy=0 ;
+  func->applyi(input_dx, input_dy, &output_dx, &output_dy, timestamp) ;
+  double delta = (double)(timestamp - last_time)/TimeStamp::one_millisecond ;
+  if (delta<=0.0) std::cout << std::endl ;
+  std::cout
+    << timestamp << " ns (" << TimeStamp::createAsStringFrom(timestamp) << "), " 
+    << std::setw(7) << delta << " ms later (" << std::setw(7) << (1000.0/delta) << " Hz), "
+    << "(" << std::setw(3) << input_dx << ", " << std::setw(3) << input_dy << ") counts"
+    << " -> (" << std::setw(3) << output_dx << ", " << std::setw(3) << output_dy << ") pixels, "
+    << "buttons: " << buttons << std::endl ;
+  if (delta<=0.0) std::cout << std::endl ;
+  last_time = timestamp;
+  button_pressed = buttons&PointingDevice::BUTTON_2 ;
 }
 
+int
+main(int argc, char** argv) {
+  try {
+     std::cout << "Libpointing version " << LIBPOINTING_VER_STRING << std::endl;
+    if (argc < 1)
+      std::cerr << "Usage: " << argv[0]
+		<< " [inputdeviceURI [outputdeviceURI [transferfunctionURI]]]"
+		<< std::endl  ;
 
-void UnitTest_One2Three (pointing::TransferFunction *tf, int max, bool negative)
-{
-    int step = negative ? -1 : 1;
-    if (max * negative < 0)
-    {
-        std::cout << "Error: Max value is no the same sign than negative boolean." << std::endl;
-        return;
-    }
-    int dx, dy;
-    for (int i = step; i!=max; i+=step)
-    {
-        tf->applyi (i, i, &dx, &dy);
-        std::cout << "(" << i << ", " << i << ") --> ";
-        std::cout << "(" << dx << ", " << dy << ")" << std::endl;
-    }
-}
+    // --- Pointing device ----------------------------------------------------
 
+    PointingDevice *input = PointingDevice::create(argc>1?argv[1]:"default:") ;
+    for (TimeStamp reftime, now;
+	 !input->isActive() && now-reftime<15*TimeStamp::one_second; 
+	 now.refresh())
+      PointingDevice::idle(500) ;
 
-void ReadCSVtoVector (std::string filename, std::vector<DataRow> &out)
-{
-    std::ifstream fileStream;
-    fileStream.open (filename);
-    if (fileStream.is_open())
-    {
-        std::string line;
-        size_t pos;
-        int values[6];
-        int index;
-        while (std::getline (fileStream, line))
-        {
-            pos = 0;
-            index = 0;
-            while ((pos = line.find(',')) != std::string::npos)
-            {
-                values[index++] = atoi(line.substr(0, pos).c_str());
-                line.erase(0, pos+1);
-            }
-            values[index] = atoi(line.c_str());
-            out.push_back (DataRow {values[0], values[1], values[2], values[3], 0, 0, values[4], values[5]});
-        }
-        fileStream.close();
-    }
-    else
-    {
-        std::cout << "Error: Can't open file '" << filename << "'" << std::endl;
-    }
-}
+    std::cout << std::endl << "Pointing device" << std::endl ;
+    std::cout << "  " << input->getURI(true).asString() << std::endl
+	      << "  " << input->getResolution() << " CPI, " 
+	      << input->getUpdateFrequency() << " Hz" << std::endl 
+	      << "  device is " << (input->isActive()?"":"not ") << "active" << std::endl 
+	      << std::endl ;
 
+    // --- Display device -----------------------------------------------------
 
-int main (int /*argc*/, char **argv)
-{
-    // Args : windowsTFTest slider=[-5:5] epp=[1|0]
-    std::string szURI ("windows:7?");
-    szURI += "slider=" + std::string(argv[1]);
-    szURI += "&epp=" + std::string(argv[2]);
-    pointing::URI uri (szURI);
-    pointing::PointingDevice *device = pointing::PointingDevice::create ("any:?debugLevel=1");
-    pointing::DisplayDevice *display = pointing::DisplayDevice::create ("any:?debugLevel=1");
-    //DisplayMyURI (uri);
-    pointing::TransferFunction *testWindowsFunction = pointing::TransferFunction::create (uri, device, display);
+    DisplayDevice *output = DisplayDevice::create(argc>2?argv[2]:"default:") ;
 
-    std::cout << "Pointing : " << device->getURI().asString() << std::endl;
-    std::cout << "Display  : " << display->getURI().asString() << std::endl;
-    std::cout << "FT       : " << testWindowsFunction->getURI(true).asString() << std::endl;
-    std::cout << "Count XY --> dXY" << std::endl;
+    double hdpi, vdpi;
+    output->getResolution(&hdpi, &vdpi) ;
+    DisplayDevice::Size size = output->getSize() ;
+    DisplayDevice::Bounds bounds = output->getBounds() ;
+    std::cout << std::endl << "Display device" << std::endl
+	      << "  " << output->getURI(true).asString() << std::endl
+	      << "  " << bounds.size.width << " x " << bounds.size.height << " pixels, "
+	      << size.width << " x " << size.height << " mm" << std::endl
+	      << "  " << hdpi << " x " << vdpi << " PPI, "
+	      << output->getRefreshRate() << " Hz" << std::endl ;
 
-    std::vector<DataRow> data;
-    ReadCSVtoVector ("data.csv", data);
-    int last[4] = {0, 0, 0, 0};
-    for (std::vector<DataRow>::iterator it = data.begin(); it != data.end(); it++)
-    {
-        testWindowsFunction->applyi (it->countX, it->countY, &it->guessX, &it->guessY);
-        last[0] = it->screenX - last[2];
-        last[1] = it->screenY - last[3];
-        std::cout << "[" << it->screenX << ", " << it->screenY << "] : (" << last[0] << ", ";
-        std::cout << last[1] << ") -> (" << it->guessX << ", " << it->guessY << ") / (";
-        std::cout << it->matlabX << ", " << it->matlabY << ")" << std::endl;
-        last[2] = it->screenX;
-        last[3] = it->screenY;
-    }
+    // --- Transfer function --------------------------------------------------
 
-    return 0;
+    func = TransferFunction::create(argc>3?argv[3]:"system:?debugLevel=2", input, output) ;
+
+    std::cout << std::endl << "Transfer function" << std::endl
+	      << "  " << func->getURI(true).asString() << std::endl
+	      << std::endl ;
+
+    // --- Ready to go --------------------------------------------------------
+
+    input->setPointingCallback(pointingCallback) ;
+    while (!button_pressed || 1)
+      PointingDevice::idle(100) ; // milliseconds
+
+    // --- Done ---------------------------------------------------------------
+
+    delete input ;
+    delete output ;
+    delete func ;
+
+  } catch (std::runtime_error e) {
+    std::cerr << "Runtime error: " << e.what() << std::endl ;
+  } catch (std::exception e) {
+    std::cerr << "Exception: " << e.what() << std::endl ;
+  }
+
+  return 0 ;
 }
