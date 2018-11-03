@@ -412,7 +412,7 @@ Pong = {
       if (this.prediction &&
           ((this.prediction.dx * ball.dx) > 0) &&
           ((this.prediction.dy * ball.dy) > 0) &&
-          (this.prediction.since < this.level.aiReaction)) {
+          (this.prediction.since < 0.2)) { //this.level.aiReaction
         this.prediction.since += dt;
         return;
       }

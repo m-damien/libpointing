@@ -56,24 +56,30 @@ window.onload = function() {
 	    function drawInfo() {
 	    	context.save();
 	    	context.font = "15px Arial";
-	    	output.ready(function () {
-		    	var text = "Display Device: " + output.bounds.size.width + " x " + output.bounds.size.height + " pixels, ";
-		    	text += output.size.width.toFixed(2) + " x " + output.size.height.toFixed(2) + " mm, ";
-		    	text += output.resolution.hppi.toFixed(2) + " x " + output.resolution.vppi.toFixed(2) + " PPI, ";
-		    	text += output.refreshRate + " Hz";
-		    	context.fillText(text, 15, 27);
-	    	});
-	    	var i;
-	    	for (i = 0; i < mice.length; i++) {
-	    		var input = mice[i].pointingDevice;
-	    		context.fillStyle = colors[i];
-	    		var y = 37 + 20*i;
-				context.fillText(input.vendor + " - " + input.product, 65, y + 12);
-	    		context.fillRect(15, y, 40, 15);
-	    	}
-	    	context.fillStyle = "#8A5E00"
-	    	context.fillText("Press [Enter] to switch transfer functions", 15, 75 + 20 *i++);
-	    	context.fillText("Press [Space] to reset pointers", 15, 75 + 20 *i++)
+	    	if (!pointing.pointingIsAvailable) {
+	    		var text = "pointingserver is not running. First run 'pointingserver start' in a terminal and refresh this page."
+	    		context.fillText(text, 15, 27);
+	    	} else {
+
+		    	output.ready(function () {
+			    	var text = "Display Device: " + output.bounds.size.width + " x " + output.bounds.size.height + " pixels, ";
+			    	text += output.size.width.toFixed(2) + " x " + output.size.height.toFixed(2) + " mm, ";
+			    	text += output.resolution.hppi.toFixed(2) + " x " + output.resolution.vppi.toFixed(2) + " PPI, ";
+			    	text += output.refreshRate + " Hz";
+			    	context.fillText(text, 15, 27);
+		    	});
+		    	var i;
+		    	for (i = 0; i < mice.length; i++) {
+		    		var input = mice[i].pointingDevice;
+		    		context.fillStyle = colors[i];
+		    		var y = 37 + 20*i;
+					context.fillText(input.vendor + " - " + input.product, 65, y + 12);
+		    		context.fillRect(15, y, 40, 15);
+		    	}
+		    	context.fillStyle = "#8A5E00"
+		    	context.fillText("Press [Enter] to switch transfer functions", 15, 75 + 20 *i++);
+		    	context.fillText("Press [Space] to reset pointers", 15, 75 + 20 *i++)
+		    }
 	    	context.restore();
 	    }
 
@@ -88,6 +94,11 @@ window.onload = function() {
 
 	    function drawStuff() {
     		context.clearRect(0, 0, canvas.width, canvas.height);
+    		output.ready(function () {
+    			context.strokeRect(200, 200, output.resolution.hppi*3.370, output.resolution.vppi*2.125);
+    			context.font = "14px Arial";
+    			context.fillText("The dimensions of this rectangle should be exactly the size of a credit card", 210, 300)
+    		});
 		    drawInfo();
 		    for (var i = 0; i < mice.length; i++) {
 		    	verifyPosition(mice[i]);
