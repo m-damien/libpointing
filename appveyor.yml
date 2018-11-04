@@ -93,7 +93,7 @@ deploy:
       appveyor_repo_tag: true
 
 notifications:
-  -provide: Email
+  -provider: Email
   to:
     - libpointing@inria.fr
   on_build_success: false
