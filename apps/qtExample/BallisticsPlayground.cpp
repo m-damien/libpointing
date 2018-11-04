@@ -55,14 +55,14 @@ BallisticsPlayground::Pointer::Pointer(const char *funcuri, BallisticsPlayground
   master = playground ;
   func = TransferFunction::create(funcuri, master->input, master->output) ;
   URI uri = func->getURI() ;
-  name = QString::fromStdString(uri.asString()) ;
+  name.setText(QString::fromStdString(uri.asString())) ;
 }
 
 BallisticsPlayground::Pointer::Pointer(TransferFunction *func, BallisticsPlayground *playground) {
   master = playground ;
   this->func = func ;
   URI uri = func->getURI() ;
-  name = QString::fromStdString(uri.asString()) ;
+  name.setText(QString::fromStdString(uri.asString())) ;
 }
 
 void
@@ -98,16 +98,16 @@ BallisticsPlayground::BallisticsPlayground(PointingDevice *input,
 
   input->setPointingCallback(pointingCallback, (void*)this) ;
 
-  oDesc = QString("%1 [%2 PPI @ %3 Hz]")
+  oDesc.setText(QString("%1 [%2 PPI @ %3 Hz]")
     .arg(output->getURI().asString().c_str())
     .arg(output->getResolution())
-    .arg(output->getRefreshRate()) ;
+    .arg(output->getRefreshRate())) ;
 
-  pdDesc = QString("QPaintDevice: log=%1/%2 DPI, phy=%3/%4 DPI")
+  pdDesc.setText(QString("QPaintDevice: log=%1/%2 DPI, phy=%3/%4 DPI")
     .arg(this->logicalDpiX())
     .arg(this->logicalDpiY())
     .arg(this->physicalDpiX())
-    .arg(this->physicalDpiY()) ;
+    .arg(this->physicalDpiY())) ;
 
 #if BALLISCTICSPLAYGROUND_FORCE_UPDATES
   connect(&disptimer, SIGNAL(timeout()), this, SLOT(update())) ;
@@ -211,10 +211,10 @@ BallisticsPlayground::paintEvent(QPaintEvent * /*event*/) {
   painter.setFont(QFont("Courier", 11)) ;
 
   if (iDesc.text().isEmpty() && input->isActive())
-    iDesc = QString("%1 [%2 CPI @ %3 Hz]")
+    iDesc.setText(QString("%1 [%2 CPI @ %3 Hz]")
       .arg(input->getURI().asString().c_str())
       .arg(input->getResolution())
-      .arg(input->getUpdateFrequency()) ;
+      .arg(input->getUpdateFrequency())) ;
 
   painter.setPen(Qt::black) ;
   painter.setBrush(Qt::red) ;
