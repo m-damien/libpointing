@@ -43,7 +43,7 @@ Follow these instructions to build the nw-app for Windows:
 
 1. In *libpointing*-folder:
 	* run `npm install nan`
-	* run `nw-gyp configure build --target={version}`, where version could be smth. like 0.17.3
+	* run `nw-gyp configure build --target={version}`, where version corresponds to the Node webkit version you want to use (like 0.35.5)
 
 1. In *Node/nw*-folder run `npm install`
 
