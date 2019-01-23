@@ -18,7 +18,7 @@
       }
    ],
    "dependencies": {
-      "nan": "^2.1.0"
+      "nan": "^2.12.1"
    },
    "main": "build/Release/pointing.node",
    "license": "GPL-2.0-or-later",

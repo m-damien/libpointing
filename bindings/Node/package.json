@@ -13,5 +13,9 @@
   },
   "author": "Izzat Mukhanov",
   "license": "GPL-2.0",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "ncp": "^2.0.0",
+    "nw-builder": "^3.5.7"
+  }
 }

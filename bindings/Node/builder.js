@@ -17,11 +17,14 @@ fs.readFile('./server/server.js', 'utf8', function (err, data) {
 
     fs.writeFile('./nw/server.js', result, 'utf8', function (err) {
       if (err) return console.log(err);
+
+      var target = 'win64';
+      if (process.platform === 'darwin') target = 'osx64'
       
       var nw = new NwBuilder({
           files: ['./nw/**'],// use the glob format
-          platforms: ['win64'],
-          version: '0.17.3'
+          platforms: [target],
+          version: '0.35.5'
       });
 
       nw.on('log', console.log);
@@ -29,11 +32,11 @@ fs.readFile('./server/server.js', 'utf8', function (err, data) {
       // Build returns a promise
       nw.build().then(function () {
         // The executable needs to be named nw.exe (This is a bug in Node Webkit)
-        var dir = "./build/pointingserver/win64/";
+        var dir = "./build/pointingserver/" + target + "/";
         process.chdir(dir);
-        fs.rename("pointingserver.exe", "nw.exe", function(err) {
-          if (err) console.log('ERROR: ' + err);
-        });
+        // fs.rename("pointingserver.exe", "nw.exe", function(err) {
+        //   if (err) console.log('ERROR: ' + err);
+        // });
       }).catch(function (error) {
           console.error(error);
       });

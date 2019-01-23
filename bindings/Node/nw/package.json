@@ -3,7 +3,13 @@
   "name": "pointingserver",
   "description": "Pointing Server",
   "version": "0.9.5",
-  "keywords": [ "libpointing", "nwjs", "HID", "transfer function" ],
+  "chromium-args": "--enable-logging=stderr",
+  "keywords": [
+    "libpointing",
+    "nwjs",
+    "HID",
+    "transfer function"
+  ],
   "window": {
     "title": "Pointing server",
     "icon": "icon.png",
