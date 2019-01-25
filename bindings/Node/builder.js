@@ -24,7 +24,15 @@ fs.readFile('./server/server.js', 'utf8', function (err, data) {
       var nw = new NwBuilder({
           files: ['./nw/**'],// use the glob format
           platforms: [target],
-          version: '0.35.5'
+          version: '0.35.5',
+          macIcns: 'nw/pointingserver.icns',
+          winVersionString: {
+            'CompanyName': 'Inria',
+            'FileDescription': 'Pointing server is part of libpointing.org',
+            'ProductName': 'Pointingserver',
+            'LegalCopyright': 'Copyright 2019',
+          },
+          winIco: 'nw/pointingserver.ico'
       });
 
       nw.on('log', console.log);
