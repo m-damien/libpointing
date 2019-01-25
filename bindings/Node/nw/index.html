@@ -3,7 +3,7 @@
 	onload = function(){
 		var gui = require('nw.gui');
 		var win = gui.Window.get();
-
+		var urlAbout = 'https://github.com/INRIA/libpointing/';
 
 		if (process.platform === 'darwin') {
 			var mb = new gui.Menu({type:"menubar"});
@@ -16,7 +16,7 @@
 			var aboutItem = new gui.MenuItem({ label: 'About' });
 			
 			aboutItem.click = function() { 
-				gui.Shell.openExternal('https://github.com/INRIA/libpointing/tree/master/bindings/Node');
+				gui.Shell.openExternal(urlAbout);
 			};
 			menuItems.append(aboutItem);
 
@@ -42,14 +42,17 @@
 			  tray.alticon = 'iconwin.png';
 			}
 			var traymenu = new gui.Menu();
-			//traymenu.append(new gui.MenuItem({label: 'Run', type: 'checkbox'}));
+			traymenu.append(new gui.MenuItem({label: 'About', click: function() {
+					gui.Shell.openExternal(urlAbout);
+				}
+			})
+			);
 			traymenu.append(new gui.MenuItem({label: 'Exit', click: function() {
 					http.close();
 					gui.App.quit();
 				}
 			})
 			);
-			//traymenu.append(new gui.MenuItem({type: 'separator' }));
 			tray.menu = traymenu;  
 		}
 	}
