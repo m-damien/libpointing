@@ -47,6 +47,11 @@
 				}
 			})
 			);
+			traymenu.append(new gui.MenuItem({label: 'Test', click: function() {
+					gui.Shell.openExternal("http://inria.github.io/libpointing/demos/web-demo/");
+				}
+			})
+			);
 			traymenu.append(new gui.MenuItem({label: 'Exit', click: function() {
 					http.close();
 					gui.App.quit();

@@ -18,7 +18,7 @@ fs.readFile('./server/server.js', 'utf8', function (err, data) {
     fs.writeFile('./nw/server.js', result, 'utf8', function (err) {
       if (err) return console.log(err);
 
-      var target = 'win64';
+      var target = 'win32';
       if (process.platform === 'darwin') target = 'osx64'
       
       var nw = new NwBuilder({
@@ -28,7 +28,7 @@ fs.readFile('./server/server.js', 'utf8', function (err, data) {
           macIcns: 'nw/pointingserver.icns',
           winVersionString: {
             'CompanyName': 'Inria',
-            'FileDescription': 'Pointing server is part of libpointing.org',
+            'FileDescription': 'Pointingserver',
             'ProductName': 'Pointingserver',
             'LegalCopyright': 'Copyright 2019',
           },
@@ -42,9 +42,6 @@ fs.readFile('./server/server.js', 'utf8', function (err, data) {
         // The executable needs to be named nw.exe (This is a bug in Node Webkit)
         var dir = "./build/pointingserver/" + target + "/";
         process.chdir(dir);
-        // fs.rename("pointingserver.exe", "nw.exe", function(err) {
-        //   if (err) console.log('ERROR: ' + err);
-        // });
       }).catch(function (error) {
           console.error(error);
       });
