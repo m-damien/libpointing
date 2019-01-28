@@ -13,15 +13,21 @@
 			});
 
 			var menuItems = new gui.Menu();
-			var aboutItem = new gui.MenuItem({ label: 'About' });
-			
+
+			var testItem = new gui.MenuItem({ label: 'Test' });	
+			testItem.click = function() { 
+				gui.Shell.openExternal("http://inria.github.io/libpointing/demos/web-demo/");
+			};
+			menuItems.append(testItem);
+
+			var aboutItem = new gui.MenuItem({ label: 'About' });	
 			aboutItem.click = function() { 
 				gui.Shell.openExternal(urlAbout);
 			};
 			menuItems.append(aboutItem);
 
 			var aboutItem = new gui.MenuItem({
-			        label: 'Help',
+			        label: 'Tools',
 			        submenu: menuItems
 			    });
 

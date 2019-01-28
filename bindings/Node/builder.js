@@ -39,7 +39,6 @@ fs.readFile('./server/server.js', 'utf8', function (err, data) {
 
       // Build returns a promise
       nw.build().then(function () {
-        // The executable needs to be named nw.exe (This is a bug in Node Webkit)
         var dir = "./build/pointingserver/" + target + "/";
         process.chdir(dir);
       }).catch(function (error) {
