@@ -104,10 +104,10 @@ var pointing = new function() {
 		this.objects = {};
 		var that = this;
 
-		socket.on('pointingCallback', function(anId, timestamp, dx, dy, buttons) {
+		socket.on('pointingCallback', function(anId, timestamp, dx, dy, buttons, rawDx, rawDy) {
 			var input = that.objects[anId];
 			if(input && input.callback)
-				input.callback(timestamp, dx, dy, buttons);
+				input.callback(timestamp, dx, dy, buttons, rawDx, rawDy);
 		});
 
 		socket.on('pointingObjectInfo', function(anId, objInfo) {
