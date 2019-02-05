@@ -125,12 +125,12 @@ io.on('connection', function(socket) {
         else {
           result = func.applyi(dx, dy, timestamp);
         }
-        socket.emit('pointingCallback', id, timestamp, result.dx, result.dy, buttons);
+        socket.emit('pointingCallback', id, timestamp, result.dx, result.dy, buttons, dx, dy);
       });
     }
     else {
       input.setPointingCallback(function(timestamp, dx, dy, buttons) {
-        socket.emit('pointingCallback', id, timestamp, dx, dy, buttons);
+        socket.emit('pointingCallback', id, timestamp, dx, dy, buttons, dx, dy);
       });
     }
   });
