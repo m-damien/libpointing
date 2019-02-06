@@ -3,7 +3,7 @@
   "name": "pointingserver",
   "description": "Pointing Server",
   "homepage": "http://libpointing.org",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "keywords": [
     "libpointing",
     "HID",
@@ -14,7 +14,7 @@
   "dependencies": {
     "express": "^4.13.3",
     "libpointing": "~1.0.3",
-    "socket.io": "^2.1.1"
+    "socket.io": "^2.2.0"
   },
   "bin": {
     "pointingserver": "./main.js"
