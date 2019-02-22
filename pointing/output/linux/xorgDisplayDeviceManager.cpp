@@ -140,12 +140,11 @@ xorgDisplayDeviceManager::xorgDisplayDeviceManager() {
     
     XRRFreeScreenResources(res);
     
-    
-    int ret = pthread_create(&thread, NULL, eventloop, (void *)this);
+    /*int ret = pthread_create(&thread, NULL, eventloop, (void *)this);
     if (ret < 0)
     {
         perror("xorgDisplayDeviceManager::xorgDisplayDeviceManager");
         throw std::runtime_error("xorgDisplayDeviceManager: pthread_create failed");
-    }
+    }*/
 }
 }
